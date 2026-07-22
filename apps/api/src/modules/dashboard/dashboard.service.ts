@@ -1,0 +1,92 @@
+import { prisma } from "@repo/database";
+
+export class DashboardService {
+  static async getStats() {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const [
+      totalUsers,
+      totalBlogs,
+      activeBlogs,
+      totalFeedbacks,
+      blogsByMonth,
+      categoryStats,
+      recentBlogs,
+      recentFeedbacks,
+    ] = await Promise.all([
+      prisma.user.count(),
+      prisma.post.count(),
+      prisma.post.count({ where: { status: "active" } }),
+      prisma.feedback.count(),
+      prisma.post.groupBy({
+        by: ["createdAt"],
+        where: {
+          createdAt: { gte: sixMonthsAgo },
+        },
+        _count: true,
+      }),
+      prisma.post.groupBy({
+        by: ["category"],
+        _count: true,
+      }),
+      prisma.post.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          createdAt: true,
+          status: true,
+        },
+      }),
+      prisma.feedback.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        include: {
+          post: {
+            select: { title: true },
+          },
+        },
+      }),
+    ]);
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthlyTrendMap: Record<string, number> = {};
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const label = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      monthlyTrendMap[label] = 0;
+    }
+
+    blogsByMonth.forEach((item: any) => {
+      const d = new Date(item.createdAt);
+      const label = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      if (monthlyTrendMap[label] !== undefined) {
+        monthlyTrendMap[label] += item._count;
+      }
+    });
+
+    const formattedMonthlyTrend = Object.entries(monthlyTrendMap).map(([name, count]) => ({
+      name,
+      count,
+    }));
+
+    return {
+      totalUsers,
+      totalBlogs,
+      activeBlogs,
+      totalFeedbacks,
+      monthlyTrend: formattedMonthlyTrend,
+      categoryDistribution: categoryStats.map((item: any) => ({
+        name: item.category,
+        value: item._count,
+      })),
+      recentBlogs,
+      recentFeedbacks,
+    };
+  }
+}

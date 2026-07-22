@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const keyword_controller_1 = require("./keyword.controller");
+const router = (0, express_1.Router)();
+router.get("/", keyword_controller_1.KeywordController.getKeywords);
+router.post("/", keyword_controller_1.KeywordController.createKeyword);
+router.get("/:id", keyword_controller_1.KeywordController.getKeywordById);
+router.put("/:id", keyword_controller_1.KeywordController.updateKeyword);
+router.delete("/:id", keyword_controller_1.KeywordController.deleteKeyword);
+exports.default = router;

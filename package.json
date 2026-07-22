@@ -1,0 +1,22 @@
+{
+  "name": "portfolio-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.15.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "clean": "rm -rf .turbo node_modules apps/dashboard/.next apps/dashboard/node_modules apps/web/.next apps/web/node_modules apps/api/dist apps/api/node_modules packages/shared/node_modules packages/database/node_modules packages/database/prisma/generated pnpm-lock.yaml",
+    "docker:build": "rm -rf ./deploy-api && pnpm --filter api --prod --legacy deploy ./deploy-api && docker build -f Dockerfile.local -t portfolio-api ."
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "glob": "^10.4.5",
+    "rimraf": "^5.0.7",
+    "inflight": "empty"
+  }
+}

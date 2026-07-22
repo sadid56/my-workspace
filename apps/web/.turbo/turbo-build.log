@@ -1,0 +1,26 @@
+$ next build
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 7.1s
+  Skipping validation of types
+GetAllBlogSlugs error: [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED'
+  }
+}
+  Collecting page data using 11 workers in 1001.8ms    ✓ Collecting page data using 11 workers in 1001.8ms 
+✓ Generating static pages using 11 workers (4/4) in 534.8ms
+  Finalizing page optimization in 15.8ms    ✓ Finalizing page optimization in 15.8ms 
+
+Route (app)        Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ○ /blogs                10m      1y
+└ ○ /blogs/[slug]
+
+
+○  (Static)  prerendered as static content
+

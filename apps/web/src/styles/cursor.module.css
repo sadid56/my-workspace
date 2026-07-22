@@ -1,0 +1,14 @@
+.cursor {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent, transparent);
+  position: absolute;
+  z-index: 999;
+  pointer-events: none; /* Ensures it doesn't block interaction with elements */
+  transition: transform 0.2s ease, background 0.4s ease; /* Smooth transitions */
+  box-shadow: 0 0 15px rgba(64, 201, 255, 0.754),
+    0 0 30px rgba(232, 28, 255, 0.135); /* Glow effect */
+  transform: scale(1); /* Normal state size */
+  mix-blend-mode: difference; /* Makes it look cool over varying backgrounds */
+}

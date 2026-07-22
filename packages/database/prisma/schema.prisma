@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Post {
+  id           String     @id @default(cuid())
+  title        String
+  slug         String     @unique
+  tags         String[]
+  coverImage   String?
+  descriptions String
+  status       Status     @default(pending)
+  feedbacks    Feedback[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  readTime     Int
+  userId       String?
+  content      String
+  category     String
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  title     String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  status    Status   @default(pending)
+  updatedAt DateTime @updatedAt
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  feedback  String?
+  anonymous Boolean
+  emoji     String
+  userId    String?
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Keywords {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      Role       @default(USER)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  banned    Boolean    @default(false)
+  banReason String?
+  feedbacks Feedback[]
+}
+
+enum Status {
+  pending
+  active
+  unactive
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BlockType {
+  INFO
+  WARNING
+  ERROR
+  TIPS
+}

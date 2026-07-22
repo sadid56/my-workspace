@@ -1,0 +1,165 @@
+.textAnimation {
+  background: linear-gradient(
+    90deg,
+    #03e9f4,
+    #0390f4,
+    #0bb5be,
+    #03e9f4,
+    #0390f4,
+    #0bb5be
+  );
+  background-size: 400%;
+  background-clip: text;
+  color: transparent;
+  animation: animate 10s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 400%;
+  }
+}
+
+.animation {
+  --btn-default-bg: rgb(41, 41, 41);
+  --btn-padding: 15px 20px;
+  --btn-hover-bg: rgb(51, 51, 51);
+  --btn-transition: 0.3s;
+  --btn-letter-spacing: 0.1rem;
+  --btn-animation-duration: 1.2s;
+  /* --btn-shadow-color: rgba(0, 0, 0, 0.137); */
+  --btn-shadow: 0 2px 10px 0 var(--btn-shadow-color);
+  /* --hover-btn-color: #FAC921; */
+  --default-btn-color: #fff;
+  --font-size: 16px;
+  --font-weight: 600;
+  --font-family: Menlo, Roboto Mono, monospace;
+}
+
+/* button settings 👆 */
+
+.animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--btn-transition);
+  overflow: hidden;
+}
+
+.animation span {
+  letter-spacing: var(--btn-letter-spacing);
+  transition: var(--btn-transition);
+  box-sizing: border-box;
+  position: relative;
+  background: inherit;
+}
+
+.animation span::before {
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  background: inherit;
+}
+
+.animation span::before,
+.animation:focus span::before {
+  animation: chitchat linear both var(--btn-animation-duration);
+}
+
+@keyframes chitchat {
+  0% {
+    content: "#";
+  }
+
+  5% {
+    content: ".";
+  }
+
+  10% {
+    content: "_";
+  }
+
+  15% {
+    content: "-!";
+  }
+
+  20% {
+    content: "$_";
+  }
+
+  25% {
+    content: "№:0";
+  }
+
+  30% {
+    content: "_";
+  }
+
+  35% {
+    content: "-?";
+  }
+
+  40% {
+    content: "..";
+  }
+
+  45% {
+    content: "=.,^!";
+  }
+
+  50% {
+    content: "S";
+  }
+
+  55% {
+    content: "A";
+  }
+
+  60% {
+    content: "D";
+    right: 0;
+  }
+
+  65% {
+    content: "I";
+    right: 0;
+  }
+
+  70% {
+    content: "D";
+    right: 0;
+  }
+
+  75% {
+    content: "'1_0<";
+    right: 0;
+  }
+
+  80% {
+    content: "56";
+    right: 0;
+  }
+
+  85% {
+    content: "r'";
+    right: 0;
+  }
+
+  90% {
+    content: "4";
+    right: 0;
+  }
+
+  95% {
+    content: "u";
+    right: 0;
+  }
+
+  100% {
+    content: "";
+    right: 0;
+  }
+}

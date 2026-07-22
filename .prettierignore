@@ -1,0 +1,42 @@
+# Ignore artifacts:
+build
+coverage
+
+# Ignore all HTML files:
+*.html
+
+# Ignore all JSON files:
+*.json
+
+# Ignore all YAML files:
+*.yml
+*.yaml
+
+# Ignore all markdown files:
+*.md
+
+# Ignore node_modules:
+node_modules
+
+# Ignore Next.js specific files:
+.next
+.cache
+out
+public
+
+# Ignore TypeScript declaration files:
+*.d.ts
+
+# Ignore log files:
+*.log
+
+# Ignore environment files:
+.env*
+
+# Ignore IDE and editor folders:
+.vscode
+.idea
+
+# Ignore OS generated files:
+.DS_Store
+Thumbs.db

@@ -1,0 +1,36 @@
+{
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "arrowParens": "always",
+    "endOfLine": "auto",
+    "bracketSpacing": true,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "useTabs": false,
+    "plugins": [
+        "prettier-plugin-tailwindcss",
+        "prettier-plugin-hbs"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "*.ts",
+                "*.tsx",
+                "*.js",
+                "*.jsx"
+            ],
+            "options": {
+                "endOfLine": "auto"
+            }
+        },
+        {
+            "files": "*.hbs",
+            "options": {
+                "parser": "hbs"
+            }
+        }
+    ]
+}
