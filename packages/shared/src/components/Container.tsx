@@ -12,7 +12,7 @@ export const Container = React.forwardRef<HTMLElement, ContainerProps>(
   ({ children, className, as: Component = "div", maxWidthClass = "max-w-[1380px]", ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(maxWidthClass, "px-4 mx-auto", className)}
         {...props}
       >

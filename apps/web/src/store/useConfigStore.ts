@@ -4,7 +4,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export interface ShortcutKeys {
   tweakDialog: string;
   zenMode: string;
-  sidebar: string;
 }
 
 export const TYPOGRAPHY = {
@@ -36,10 +35,11 @@ export type ThemeColorName = keyof typeof THEME_COLORS;
 interface ConfigState {
   syntaxTheme: string;
   isZenMode: boolean;
-  isRightSidebarHidden: boolean;
   shortcutKeys: ShortcutKeys;
   showTweakDialog: boolean;
   themeColor: ThemeColorName;
+  siteTheme: "light" | "dark";
+  blogLayout: "horizontal" | "grid";
   _hasHydrated: boolean;
 
   // Actions
@@ -48,20 +48,21 @@ interface ConfigState {
   setSyntaxTheme: (theme: string) => void;
   setIsZenMode: (isZen: boolean) => void;
   toggleZenMode: () => void;
-  setIsRightSidebarHidden: (isHidden: boolean) => void;
-  toggleRightSidebar: () => void;
   setShortcutKeys: (keys: ShortcutKeys) => void;
   setThemeColor: (color: ThemeColorName) => void;
+  setSiteTheme: (theme: "light" | "dark") => void;
+  setBlogLayout: (layout: "horizontal" | "grid") => void;
   resetSettings: () => void;
 }
 
 const DEFAULT_SETTINGS = {
   syntaxTheme: "vscDarkPlus",
   isZenMode: false,
-  isRightSidebarHidden: false,
-  shortcutKeys: { tweakDialog: "A", zenMode: "Z", sidebar: "B" },
+  shortcutKeys: { tweakDialog: "A", zenMode: "Z" },
   showTweakDialog: false,
   themeColor: "orange" as ThemeColorName,
+  siteTheme: "dark" as const,
+  blogLayout: "horizontal" as const,
 };
 
 export const useConfigStore = create<ConfigState>()(
@@ -75,10 +76,10 @@ export const useConfigStore = create<ConfigState>()(
       setSyntaxTheme: (syntaxTheme) => set({ syntaxTheme }),
       setIsZenMode: (isZenMode) => set({ isZenMode }),
       toggleZenMode: () => set((state) => ({ isZenMode: !state.isZenMode })),
-      setIsRightSidebarHidden: (isRightSidebarHidden) => set({ isRightSidebarHidden }),
-      toggleRightSidebar: () => set((state) => ({ isRightSidebarHidden: !state.isRightSidebarHidden })),
       setShortcutKeys: (shortcutKeys) => set({ shortcutKeys }),
       setThemeColor: (themeColor) => set({ themeColor }),
+      setSiteTheme: (siteTheme) => set({ siteTheme }),
+      setBlogLayout: (blogLayout) => set({ blogLayout }),
       resetSettings: () => set(DEFAULT_SETTINGS),
     }),
     {

@@ -1,11 +1,8 @@
 import { GetAllBlogSlugs } from "@/actions/blog-actions";
-import { RouteParams } from "@/types/next";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import BlogDetails from "../_components/BlogDetails";
 import { notFound } from "next/navigation";
 import { TBlog } from "@/types/blog-types";
 import { getBlog, getBlogMeta } from "@/actions/cached-data";
-import { CACHE_TIME } from "@/constants/common";
 
 export const dynamic = "force-static";
 
@@ -21,7 +18,7 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: RouteParams<"slug">) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog = await getBlogMeta(slug);
 
@@ -52,25 +49,16 @@ export async function generateMetadata({ params }: RouteParams<"slug">) {
   };
 }
 
-const BlogReadPage = async ({ params }: RouteParams<"slug">) => {
+const BlogReadPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
-  const queryClient = new QueryClient();
 
-  const blog: TBlog = await queryClient.fetchQuery({
-    queryKey: ["blog", slug],
-    queryFn: () => getBlog(slug),
-    staleTime: CACHE_TIME[10],
-  });
+  const blog: TBlog | null = await getBlog(slug);
 
   if (!blog) {
     notFound();
   }
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <BlogDetails blog={blog} />
-    </HydrationBoundary>
-  );
+  return <BlogDetails blog={blog} />;
 };
 
 export default BlogReadPage;

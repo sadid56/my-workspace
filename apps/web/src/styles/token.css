@@ -1,0 +1,57 @@
+:root {
+  /* Core Brand Colors */
+  --primary: #f97316;
+  --secondary: #f59e0b;
+  --tertiary: #3b82f6;
+
+  /* Dynamic Overrides default to brand colors */
+  --theme-primary: var(--primary);
+  --theme-secondary: var(--secondary);
+
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+
+  /* Text & Foreground Colors */
+  --foreground: #090d16;
+  --foreground-secondary: #334155;
+  --muted-foreground: #64748b;
+
+  /* Card Colors */
+  --card: #ffffff;
+  --card-foreground: #090d16;
+
+  /* Component Specifics */
+  --border: #e2e8f0;
+  --input: #f1f5f9;
+}
+
+.dark {
+  /* Core Brand Colors */
+  --primary: #03e9f4;
+  --secondary: #ffbe7b;
+  --tertiary: #3b82f6;
+
+  /* Dynamic Overrides default to brand colors */
+  --theme-primary: var(--primary);
+  --theme-secondary: var(--secondary);
+
+  /* Background Colors */
+  --bg-primary: #010610;
+  --bg-secondary: #050b18;
+  --bg-tertiary: #0b111e;
+
+  /* Text & Foreground Colors */
+  --foreground: #f8fafc;
+  --foreground-secondary: #cbd5e1;
+  --muted-foreground: #94a3b8;
+
+  /* Card Colors */
+  --card: #050b18;
+  --card-foreground: #f8fafc;
+
+  /* Component Specifics */
+  --border: #1e293b;
+  --input: #0f172a;
+}

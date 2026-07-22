@@ -1,3 +1,5 @@
+"use client";
+
 import { showToast } from "@/providers/ToastProvider";
 import { Clipboard, ClipboardCheck, ExternalLink, Image as ImageIcon } from "lucide-react";
 import React, { useState } from "react";
@@ -124,10 +126,9 @@ const CodeBlock = ({ className, children }: any) => {
           language={language}
           style={syntaxThemes[syntaxTheme] || vscDarkPlus}
           customStyle={{
-            margin: 0,
+            margin: 0,  
             padding: "1rem",
-            backgroundColor: "transparent",
-            backgroundImage: "none",
+            background: "transparent",
             fontSize: "0.875rem",
             lineHeight: "1.625",
             borderRadius: "0.7rem",

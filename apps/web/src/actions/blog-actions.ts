@@ -1,6 +1,6 @@
 "use server";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export const GetBlogs = async (category?: string, search?: string, page: number = 1, limit: number = 3) => {
   try {
@@ -10,7 +10,7 @@ export const GetBlogs = async (category?: string, search?: string, page: number 
     url.searchParams.append("page", page.toString());
     url.searchParams.append("limit", limit.toString());
 
-    const res = await fetch(url.toString(), { cache: "no-store" });
+    const res = await fetch(url.toString(), { next: { revalidate: 60 } });
     if (!res.ok) return { blogs: [], totalCount: 0 };
     return res.json();
   } catch (error) {

@@ -5,12 +5,12 @@ export const revalidate = 600;
 
 export const metadata: Metadata = {
   title: {
-    default: "NexG Lab — Modern software architecture",
-    template: "%s | NexG Lab Blog",
+    default: "Sadid Coder — Modern software architecture",
+    template: "%s | Sadid Coder Blog",
   },
 
   description:
-    "NexG Lab Blog shares practical tutorials, deep dives, and real-world insights on web development, Linux, and modern software architecture.",
+    "Sadid Coder Blog shares practical tutorials, deep dives, and real-world insights on web development, Linux, and modern software architecture.",
 
   keywords: [
     "web development blog",
@@ -26,23 +26,23 @@ export const metadata: Metadata = {
     "linux",
   ],
 
-  authors: [{ name: "NexG Lab" }],
-  creator: "NexG Lab",
-  publisher: "NexG Lab",
+  authors: [{ name: "Sadid Coder" }],
+  creator: "Sadid Coder",
+  publisher: "Sadid Coder",
 
   metadataBase: new URL(process.env.BETTER_AUTH_URL || "http://localhost:3000"),
 
   openGraph: {
-    title: "NexG Lab Blog — Web Development & Engineering",
+    title: "Sadid Coder Blog — Web Development & Engineering",
     description: "Practical tutorials and engineering insights on React, Next.js, JavaScript, backend systems, and modern web development.",
     url: process.env.BETTER_AUTH_URL,
-    siteName: "NexG Lab",
+    siteName: "Sadid Coder",
     type: "website",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "NexG Lab Blog — Web Development & Engineering",
+    title: "Sadid Coder Blog — Web Development & Engineering",
     description: "Tutorials, guides, and real-world lessons on React, Next.js, JavaScript, and full-stack development.",
   },
 
@@ -56,6 +56,32 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Home() {
-  return <BlogCards />;
+import { GetBlogs, GetHomeCategory } from "@/actions/blog-actions";
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; search?: string; page?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const category = resolvedSearchParams.category || "";
+  const search = resolvedSearchParams.search || "";
+  const pageNum = Number(resolvedSearchParams.page) || 1;
+  const limit = 3;
+
+  const [data, categories] = await Promise.all([
+    GetBlogs(category, search, pageNum, limit),
+    GetHomeCategory(),
+  ]);
+
+  return (
+    <BlogCards
+      data={data}
+      categories={categories}
+      page={pageNum}
+      limit={limit}
+      currentCategory={category}
+      currentSearch={search}
+    />
+  );
 }

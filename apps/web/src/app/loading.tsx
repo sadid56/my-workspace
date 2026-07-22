@@ -1,11 +1,7 @@
 import Loading from "@/components/ui/Loading";
 
 const loading = () => {
-  return (
-    <div>
-      <Loading />
-    </div>
-  );
+  return <Loading />;
 };
 
 export default loading;

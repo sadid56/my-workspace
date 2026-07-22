@@ -6,15 +6,20 @@ import { cn } from "@/lib/cn";
 import usePageScroll from "@/hooks/usePageScroll";
 import ShinnyButton from "@/components/ui/ShinnyButton";
 import Link from "next/link";
-import LINKS from "@/constant/links";
 import socialLinks from "@/data/socialLinks";
 import { Drawer } from "vaul";
 import { IconX } from "@tabler/icons-react";
+import { Settings } from "lucide-react";
+import { useConfigStore } from "@/store/useConfigStore";
+import { usePathname, useRouter } from "next/navigation";
 
 const Navbar = () => {
   const handleScroll = usePageScroll();
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { setShowTweakDialog } = useConfigStore();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScrollState = () => {
@@ -25,17 +30,26 @@ const Navbar = () => {
   }, []);
 
   const links = [
-    { path: "#experience", label: "Experience" },
-    { path: "#projects", label: "Projects" },
+    { path: "/#experience", hash: "#experience", label: "Experience" },
+    { path: "/projects", label: "Projects" },
   ];
+
+  const handleLinkClick = (e: React.MouseEvent, link: typeof links[number]) => {
+    if (link.hash && pathname === "/") {
+      e.preventDefault();
+      handleScroll(e, link.hash);
+    } else {
+      router.push(link.path);
+    }
+  };
 
   return (
     <nav
       className={cn(
         "fixed transition-all -translate-x-1/2 left-1/2 top-4 duration-500 z-[60]",
         isScrolled
-          ? "w-[90%] md:w-[70%] lg:w-[64%] backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl"
-          : " bg-transparent border-transparent md:py-2 w-[90%] md:w-[70%] lg:w-[68%]"
+          ? "w-[90%] md:w-[70%] lg:w-[80%] backdrop-blur-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl"
+          : " bg-transparent border-transparent md:py-2 w-[90%] md:w-[70%] lg:w-[90%]"
       )}
     >
       <div className={cn("flex items-center justify-between transition-all duration-500 p-1 md:p-3")}>
@@ -54,7 +68,7 @@ const Navbar = () => {
               width={100}
               height={100}
               priority
-              className='transition-all duration-500 group-hover:scale-105'
+              className='transition-all duration-500 group-hover:scale-105 dark:invert-0 invert'
               style={{ width: "auto", height: "auto" }}
             />
           </div>
@@ -67,21 +81,35 @@ const Navbar = () => {
               {links.map((link, idx) => (
                 <button
                   key={idx}
-                  onClick={(e) => handleScroll(e, link.path)}
-                  className='cursor-pointer relative font-semibold text-slate-300 transition-all duration-300 hover:text-white uppercase font-montserrat tracking-wider text-sm group'
+                  onClick={(e) => handleLinkClick(e, link)}
+                  className='cursor-pointer relative font-semibold text-slate-700 dark:text-slate-300 transition-all duration-300 hover:text-black dark:hover:text-white uppercase font-montserrat tracking-wider text-sm group'
                 >
                   {link.label}
-                  <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all duration-300 group-hover:w-full'></span>
+                  <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-theme-primary transition-all duration-300 group-hover:w-full'></span>
                 </button>
               ))}
             </div>
-            <Link target='_blank' href={LINKS.blog}>
+            <Link href={"/blogs"}>
               <ShinnyButton className={cn("transition-all duration-300", isScrolled ? "scale-90" : "scale-100")}>BLOGS</ShinnyButton>
             </Link>
+            <button
+              onClick={() => setShowTweakDialog(true)}
+              className="p-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 hover:border-theme-primary/30 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition-all duration-300 active:scale-95 cursor-pointer flex items-center justify-center"
+              aria-label="Settings"
+            >
+              <Settings className="w-5 h-5 transition-transform duration-500 hover:rotate-90" />
+            </button>
           </div>
 
           {/* Mobile Menu */}
-          <div className='md:hidden text-white pr-2 z-[70] relative'>
+          <div className='md:hidden flex items-center gap-3 text-slate-750 dark:text-white pr-2 z-[70] relative'>
+            <button
+              onClick={() => setShowTweakDialog(true)}
+              className="p-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white active:scale-95 flex items-center justify-center cursor-pointer"
+              aria-label="Settings"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
             <Drawer.Root open={open} onOpenChange={setOpen} direction='bottom' shouldScaleBackground>
               <Drawer.Trigger asChild>
                 <div className='md:hidden text-white z-[70] relative'>
@@ -132,7 +160,7 @@ const Navbar = () => {
                         <Drawer.Close key={idx} asChild>
                           <button
                             onClick={(e) => {
-                              handleScroll(e, link.path);
+                              handleLinkClick(e, link);
                               setOpen(false);
                             }}
                             className='font-semibold text-white uppercase font-montserrat tracking-widest py-3 px-6 hover:text-sky-400 transition-all active:scale-95'
@@ -143,7 +171,7 @@ const Navbar = () => {
                       ))}
 
                       <Drawer.Close asChild>
-                        <Link href={LINKS.blog} className='mt-6'>
+                        <Link href={"/blogs"} className='mt-6'>
                           <ShinnyButton>BLOGS</ShinnyButton>
                         </Link>
                       </Drawer.Close>

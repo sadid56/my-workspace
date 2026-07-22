@@ -1,33 +1,86 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { NoData } from "@/components/ui/no-data";
-import { GetBlogs } from "@/actions/blog-actions";
-import { useQuery } from "@tanstack/react-query";
-import { CACHE_TIME } from "@/constants/common";
 import BlogCardHorizontal from "./BlogCard";
-import { BlogCardHorizontalSkeleton } from "./BlogCardHorizentalSkeketon";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Container from "@/components/global/Container";
+import Dropdown from "@/components/ui/Dropdown";
+import { useConfigStore } from "@/store/useConfigStore";
 
-import { useDynamicLimit } from "@/hooks/useDynamicLimit";
+interface BlogCardsProps {
+  data: {
+    blogs: any[];
+    totalCount: number;
+  };
+  categories: any[];
+  page: number;
+  limit: number;
+  currentCategory: string;
+  currentSearch: string;
+}
 
-const BlogCards = () => {
+const BlogCards = ({
+  data,
+  categories,
+  page,
+  limit,
+  currentCategory,
+  currentSearch,
+}: BlogCardsProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const limit = useDynamicLimit(3);
+  const [searchQuery, setSearchQuery] = useState(currentSearch);
+  const [selectedCategory, setSelectedCategory] = useState(currentCategory);
 
-  const category = searchParams.get("category") || "";
-  const search = searchParams.get("search") || "";
-  const page = Number(searchParams.get("page")) || 1;
+  const { blogLayout, _hasHydrated } = useConfigStore();
+  const [mounted, setMounted] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["blogs", category, search, page, limit],
-    queryFn: () => GetBlogs(category, search, page, limit),
-    staleTime: CACHE_TIME[10],
-  });
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const layout = mounted && _hasHydrated ? blogLayout : "horizontal";
+
+  useEffect(() => {
+    setSearchQuery(currentSearch);
+  }, [currentSearch]);
+
+  useEffect(() => {
+    setSelectedCategory(currentCategory);
+  }, [currentCategory]);
+
+  // Debounced search query URL updates
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (searchQuery) {
+        params.set("search", searchQuery);
+      } else {
+        params.delete("search");
+      }
+      params.set("page", "1"); // Reset to page 1 on new search
+      router.push(`?${params.toString()}`, { scroll: false });
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
+  const handleCategoryChange = (cat: string) => {
+    setSelectedCategory(cat);
+    const params = new URLSearchParams(searchParams.toString());
+    if (cat) {
+      params.set("category", cat);
+    } else {
+      params.delete("category");
+    }
+    params.set("page", "1"); // Reset to page 1 on category change
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   const blogs = data?.blogs || [];
   const totalCount = data?.totalCount || 0;
@@ -39,80 +92,100 @@ const BlogCards = () => {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  if (isLoading) {
-    return (
-      <div className='space-y-4'>
-        {Array.from({ length: limit }).map((_, i) => (
-          <BlogCardHorizontalSkeleton key={i} />
-        ))}
-      </div>
-    );
-  }
-
-  if (blogs.length === 0) {
-    return (
-      <NoData
-        title="Can't find any blog!"
-        description="We can't find any blogs with our queries please try another search or filter."
-      ></NoData>
-    );
-  }
-
   return (
-    <div className='space-y-6 pb-10'>
-      <div className='space-y-4'>
-        {blogs.map((blog: any) => (
-          <BlogCardHorizontal post={blog} key={blog.id}></BlogCardHorizontal>
-        ))}
-      </div>
-
-      {totalPages > 1 && (
-        <div className='flex items-center justify-center gap-2 pt-4'>
-          <Button
-            variant='outline'
-            size='icon'
-            onClick={() => handlePageChange(Math.max(1, page - 1))}
-            disabled={page === 1}
-            className='rounded-xl border-theme-primary/10 hover:bg-theme-primary/10 hover:text-theme-primary transition-all duration-300'
-          >
-            <ChevronLeft className='h-4 w-4' />
-          </Button>
-
-          <div className='flex items-center gap-1.5'>
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const pageNumber = i + 1;
-              const isActive = pageNumber === page;
-              return (
-                <Button
-                  key={pageNumber}
-                  variant={isActive ? "default" : "outline"}
-                  size='sm'
-                  onClick={() => handlePageChange(pageNumber)}
-                  className={cn(
-                    "min-w-9 h-9 rounded-xl font-bold transition-all duration-300",
-                    isActive
-                      ? "bg-theme-primary hover:bg-theme-primary/90 text-white shadow-lg shadow-theme-primary/20"
-                      : "border-theme-primary/10 hover:bg-theme-primary/10 hover:text-theme-primary",
-                  )}
-                >
-                  {pageNumber}
-                </Button>
-              );
-            })}
+    <Container className="pt-28 md:pt-36">
+      <div className='space-y-6 pb-10'>
+        {/* Search and Category Select Row */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search blogs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-neutral-400"
+            />
           </div>
-
-          <Button
-            variant='outline'
-            size='icon'
-            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
-            className='rounded-xl border-theme-primary/10 hover:bg-theme-primary/10 hover:text-theme-primary transition-all duration-300'
-          >
-            <ChevronRight className='h-4 w-4' />
-          </Button>
+          <Dropdown
+            options={[
+              { value: "", label: "All Categories" },
+              ...categories.map((cat: any) => ({
+                value: cat.slug,
+                label: cat.title,
+              })),
+            ]}
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          />
         </div>
-      )}
-    </div>
+
+        {blogs.length === 0 ? (
+          <NoData
+            title="Can't find any blog!"
+            description="We can't find any blogs with our queries please try another search or filter."
+          />
+        ) : (
+          <>
+             <div className={cn(
+              layout === "grid"
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                : "space-y-4"
+            )}>
+              {blogs.map((blog: any) => (
+                <BlogCardHorizontal post={blog} key={blog.id} layout={layout}></BlogCardHorizontal>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className='flex items-center justify-center gap-2 pt-4'>
+                <Button
+                  variant='outline'
+                  size='icon'
+                  onClick={() => handlePageChange(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className='rounded-xl border-theme-primary/10 hover:bg-theme-primary/10 hover:text-theme-primary transition-all duration-300'
+                >
+                  <ChevronLeft className='h-4 w-4' />
+                </Button>
+
+                <div className='flex items-center gap-1.5'>
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const pageNumber = i + 1;
+                    const isActive = pageNumber === page;
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={isActive ? "default" : "outline"}
+                        size='sm'
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={cn(
+                          "min-w-9 h-9 rounded-xl font-bold transition-all duration-300",
+                          isActive
+                            ? "bg-theme-primary hover:bg-theme-primary/90 text-white shadow-lg shadow-theme-primary/20"
+                            : "border-theme-primary/10 hover:bg-theme-primary/10 hover:text-theme-primary",
+                        )}
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant='outline'
+                  size='icon'
+                  onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className='rounded-xl border-theme-primary/10 hover:bg-theme-primary/10 hover:text-theme-primary transition-all duration-300'
+                >
+                  <ChevronRight className='h-4 w-4' />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </Container>
   );
 };
 

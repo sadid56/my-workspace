@@ -19,7 +19,7 @@
   left: 12%;
   width: 75%;
   height: 40%;
-  background-color: #010610;
+  background-color: var(--bg-primary);
   transition: 0.5s;
   transform-origin: center;
 }
@@ -32,7 +32,7 @@
   left: 12%;
   width: 75%;
   height: 40%;
-  background-color: #010610;
+  background-color: var(--bg-primary);
   transition: 0.5s;
 }
 

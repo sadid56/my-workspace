@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
-import { ReactLenis } from "@/utils/lenis";
 import { Montserrat, Poppins } from "next/font/google";
 import { cn } from "@/lib/cn";
 import QueryProvider from "@/providers/QueryProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
+import TopProgressBar from "@/components/ui/TopProgressBar";
+import Navbar from "@/components/shared/navbar/Navbar";
+import Footer from "@/components/shared/footer/Footer";
+import ThemeColorManager from "@/components/global/ThemeColorManager";
+import SettingsSidebar from "@/components/global/SettingsSidebar";
+import ShortcutManager from "@/components/global/ShortcutManager";
+import NoiseBackground from "@/components/global/NoiseBackground";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -31,23 +37,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <ReactLenis
-        options={{
-          duration: 1.1,
-          lerp: 0.1,
-          wheelMultiplier: 1.5,
-          touchMultiplier: 2,
-        }}
-        root
-      >
+    <html lang='en' className="dark">
         <body className={cn(montserrat.variable, poppins.variable, "antialiased")}>
           <QueryProvider>
-            {children}
+            <ThemeColorManager />
+            <SettingsSidebar />
+            <ShortcutManager />
+            <TopProgressBar />
+            <Navbar />
+             <NoiseBackground>
+              {children}
+              <Footer />
+             </NoiseBackground>
             <ToastProvider />
           </QueryProvider>
         </body>
-      </ReactLenis>
     </html>
   );
 }

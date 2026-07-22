@@ -1,12 +1,25 @@
 @import "tailwindcss";
+@import "./token.css";
 
 @theme inline {
   --font-montserrat: var(--font-montserrat);
   --font-poppins: var(--font-poppins);
 
-  --color-primary: #03e9f4;
-  --color-secondary: #ffbe7b;
-  --color-mainBgColor: #010610;
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-mainBgColor: var(--bg-primary);
+
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--bg-tertiary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+
+  --color-theme-primary: var(--theme-primary);
+  --color-theme-secondary: var(--theme-secondary);
 
   --animation-shimmer: shimmer 5s linear infinite;
 
@@ -15,6 +28,10 @@
 
 /* Define variables for animations and keyframes */
 @layer base {
+  body {
+    background-color: var(--bg-primary);
+    color: var(--foreground);
+  }
   @keyframes shimmer {
     from {
       background-position: 0 0;
@@ -104,7 +121,7 @@
 
 .line {
   fill: none;
-  stroke: white;
+  stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 3;
@@ -125,4 +142,13 @@
 .hamburger input:checked + svg .line-top-bottom {
   stroke-dasharray: 20 300;
   stroke-dashoffset: -32.42;
+}
+
+/* Zen Mode hides header/navbar and footer */
+html.zen-mode nav {
+  display: none !important;
+}
+
+html.zen-mode footer {
+  display: none !important;
 }

@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { IconAlertTriangle, IconHome } from "@tabler/icons-react";
 
