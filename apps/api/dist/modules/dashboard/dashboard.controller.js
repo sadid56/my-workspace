@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardController = void 0;
+const http_status_codes_1 = require("http-status-codes");
 const dashboard_service_1 = require("./dashboard.service");
+const _utils_1 = require("../../utils");
 class DashboardController {
-    static async getStats(req, res) {
-        try {
-            const stats = await dashboard_service_1.DashboardService.getStats();
-            return res.status(200).json(stats);
-        }
-        catch (error) {
-            console.error("getStats controller error:", error);
-            return res.status(500).json({ error: "Failed to fetch dashboard stats" });
-        }
-    }
+    static getStats = (0, _utils_1.catchAsync)(async (req, res) => {
+        const stats = await dashboard_service_1.DashboardService.getStats();
+        (0, _utils_1.sendResponse)(res, {
+            success: true,
+            statusCode: http_status_codes_1.StatusCodes.OK,
+            message: "Dashboard stats retrieved successfully",
+            data: stats,
+        });
+    });
 }
 exports.DashboardController = DashboardController;

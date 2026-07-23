@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 import socialLinks from "@/data/socialLinks";
 import { FlipWords } from "@/components/ui/FlipWords";
-import LINKS from "@/constant/links";
+import LINKS from "@/constants/links";
 import styles from "@/styles/hero.module.css";
 
 const Hero = () => {

@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { NoData } from "@/components/ui/no-data";
 import BlogCardHorizontal from "./BlogCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useQueryState, parseAsString, parseAsInteger } from "nuqs";
 import { cn } from "@/lib/utils";
 import Container from "@/components/global/Container";
 import Dropdown from "@/components/ui/Dropdown";
@@ -31,11 +31,20 @@ const BlogCards = ({
   currentCategory,
   currentSearch,
 }: BlogCardsProps) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const [, setSearchQuery] = useQueryState(
+    "search",
+    parseAsString.withDefault("").withOptions({ shallow: false, scroll: false })
+  );
+  const [, setSelectedCategory] = useQueryState(
+    "category",
+    parseAsString.withDefault("").withOptions({ shallow: false, scroll: false })
+  );
+  const [, setPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1).withOptions({ shallow: false, scroll: false })
+  );
 
-  const [searchQuery, setSearchQuery] = useState(currentSearch);
-  const [selectedCategory, setSelectedCategory] = useState(currentCategory);
+  const [searchVal, setSearchVal] = useState(currentSearch);
 
   const { blogLayout, _hasHydrated } = useConfigStore();
   const [mounted, setMounted] = useState(false);
@@ -47,39 +56,24 @@ const BlogCards = ({
   const layout = mounted && _hasHydrated ? blogLayout : "horizontal";
 
   useEffect(() => {
-    setSearchQuery(currentSearch);
+    setSearchVal(currentSearch);
   }, [currentSearch]);
-
-  useEffect(() => {
-    setSelectedCategory(currentCategory);
-  }, [currentCategory]);
 
   // Debounced search query URL updates
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (searchQuery) {
-        params.set("search", searchQuery);
-      } else {
-        params.delete("search");
+      if (searchVal !== currentSearch) {
+        setSearchQuery(searchVal || null);
+        setPage(1); 
       }
-      params.set("page", "1"); // Reset to page 1 on new search
-      router.push(`?${params.toString()}`, { scroll: false });
     }, 400);
 
     return () => clearTimeout(delayDebounce);
-  }, [searchQuery]);
+  }, [searchVal, currentSearch, setSearchQuery, setPage]);
 
   const handleCategoryChange = (cat: string) => {
-    setSelectedCategory(cat);
-    const params = new URLSearchParams(searchParams.toString());
-    if (cat) {
-      params.set("category", cat);
-    } else {
-      params.delete("category");
-    }
-    params.set("page", "1"); // Reset to page 1 on category change
-    router.push(`?${params.toString()}`, { scroll: false });
+    setSelectedCategory(cat || null);
+    setPage(1); 
   };
 
   const blogs = data?.blogs || [];
@@ -87,9 +81,7 @@ const BlogCards = ({
   const totalPages = Math.ceil(totalCount / limit);
 
   const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newPage));
-    router.push(`?${params.toString()}`, { scroll: false });
+    setPage(newPage);
   };
 
   return (
@@ -101,8 +93,8 @@ const BlogCards = ({
             <input
               type="text"
               placeholder="Search blogs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchVal}
+              onChange={(e) => setSearchVal(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-neutral-400"
             />
           </div>
@@ -114,7 +106,7 @@ const BlogCards = ({
                 label: cat.title,
               })),
             ]}
-            value={selectedCategory}
+            value={currentCategory}
             onChange={handleCategoryChange}
           />
         </div>

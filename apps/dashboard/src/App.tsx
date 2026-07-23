@@ -1,15 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import DashboardLayout from "./app/dashboard/layout";
-import DashboardHome from "./app/dashboard/page";
-import BlogsPage from "./app/dashboard/blogs/page";
-import CreateBlogPage from "./app/dashboard/blogs/create/page";
-import EditBlogPage from "./app/dashboard/blogs/edit/[id]/page";
-import CategoriesPage from "./app/dashboard/categories/page";
-import FeedbackPage from "./app/dashboard/feedback/page";
-import KeywordsPage from "./app/dashboard/keywords/page";
-import SettingsPage from "./app/dashboard/settings/page";
-import UsersPage from "./app/dashboard/users/page";
-import SignInPage from "./app/auth/sign-in/page";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+import DashboardHome from "@/pages/DashboardHome";
+import BlogsPage from "@/pages/BlogsPage";
+import CreateBlogPage from "@/pages/CreateBlogPage";
+import EditBlogPage from "@/pages/EditBlogPage";
+import CategoriesPage from "@/pages/CategoriesPage";
+import FeedbackPage from "@/pages/FeedbackPage";
+import KeywordsPage from "@/pages/KeywordsPage";
+import SettingsPage from "@/pages/SettingsPage";
+import UsersPage from "@/pages/UsersPage";
+import SignInPage from "@/pages/SignInPage";
 import useCurrentUser from "./hooks/useCurrentUser";
 
 function ProtectedRoute() {

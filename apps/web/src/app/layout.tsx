@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 import { Montserrat, Poppins } from "next/font/google";
 import { cn } from "@/lib/cn";
-import QueryProvider from "@/providers/QueryProvider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ToastProvider } from "@/providers/ToastProvider";
 import TopProgressBar from "@/components/ui/TopProgressBar";
 import Navbar from "@/components/shared/navbar/Navbar";
@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang='en' className="dark">
         <body className={cn(montserrat.variable, poppins.variable, "antialiased")}>
-          <QueryProvider>
+          <NuqsAdapter>
             <ThemeColorManager />
             <SettingsSidebar />
             <ShortcutManager />
@@ -50,7 +50,7 @@ export default function RootLayout({
               <Footer />
              </NoiseBackground>
             <ToastProvider />
-          </QueryProvider>
+          </NuqsAdapter>
         </body>
     </html>
   );

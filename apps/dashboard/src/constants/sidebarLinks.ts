@@ -1,4 +1,4 @@
-import { Home, Users, BookOpen, Settings2, LucideIcon, MessageSquare, Mail, Layers, Tag } from "lucide-react";
+import { Home, Users, BookOpen, Settings2, LucideIcon, MessageSquare, Layers, Tag } from "lucide-react";
 
 export interface NavItem {
   title: string;

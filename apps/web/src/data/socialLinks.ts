@@ -1,4 +1,4 @@
-import LINKS from "@/constant/links";
+import LINKS from "@/constants/links";
 import { IconBrandDiscord, IconBrandFacebook, IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 
 const socialLinks = [

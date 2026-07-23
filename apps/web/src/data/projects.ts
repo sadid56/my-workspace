@@ -1,4 +1,4 @@
-import LINKS from "@/constant/links";
+import LINKS from "@/constants/links";
 
 const projects = [
   {

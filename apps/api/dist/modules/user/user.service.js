@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const database_1 = require("@repo/database");
-const parseDevice_1 = require("../../utils/parseDevice");
+const _utils_1 = require("../../utils");
 class UserService {
     static async getUsers(search = "") {
         const users = await database_1.prisma.user.findMany({
@@ -21,7 +21,7 @@ class UserService {
             sessions: user.sessions.map((session) => ({
                 ip: session?.ipAddress,
                 userAgent: session?.userAgent,
-                deviceInfo: (0, parseDevice_1.parseDevice)(session.userAgent),
+                deviceInfo: (0, _utils_1.parseDevice)(session.userAgent),
             })),
         }));
     }

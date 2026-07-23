@@ -1,5 +1,5 @@
 import { fetcher } from "@/lib/fetcher";
-import { Feedback } from "../../../prisma/generated/client";
+import { Feedback } from "@repo/database";
 
 export const FeedbackEndpoints = {
   getFeedback: (params: { search?: string; page?: number; limit?: number }) => {

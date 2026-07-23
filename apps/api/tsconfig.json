@@ -9,7 +9,17 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@utils": ["src/utils"],
+      "@utils/*": ["src/utils/*"],
+      "@lib": ["src/lib"],
+      "@lib/*": ["src/lib/*"],
+      "@middlewares": ["src/middlewares"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@config/*": ["src/config/*"]
+    }
   },
   "include": ["src/**/*"]
 }

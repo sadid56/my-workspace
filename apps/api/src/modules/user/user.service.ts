@@ -1,5 +1,5 @@
 import { prisma } from "@repo/database";
-import { parseDevice } from "../../utils/parseDevice";
+import { parseDevice } from "@utils";
 
 export class UserService {
   static async getUsers(search: string = "") {

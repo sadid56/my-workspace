@@ -7,25 +7,15 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Send } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { feedbackSchema } from "@/validations/feedback";
-import useCurrentUser from "@/hooks/useCurrentUser";
-import { useSubmitFeedbacks } from "@/react-query/feedback/actions";
+import { submitFeedbackAction } from "@/actions/feedback-actions";
 
 type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 
 export default function BlogFeedback({ blogId }: { blogId: string }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { user } = useCurrentUser({});
-
-  const [showSignInModal, setShowSignInModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const submitFeedback = useSubmitFeedbacks();
 
   const emojis = [
     { emoji: "😍", label: "Love it" },
@@ -43,27 +33,24 @@ export default function BlogFeedback({ blogId }: { blogId: string }) {
     },
   });
 
-  const onSubmit = async (data: FeedbackFormValues, anonymous: boolean = false) => {
-    if (!user && !anonymous) {
-      setShowSignInModal(true);
-      return;
-    }
-
+  const onSubmit = async (data: FeedbackFormValues) => {
     try {
       setIsLoading(true);
 
-      await submitFeedback.mutateAsync({
+      const result = await submitFeedbackAction({
         ...data,
-        anonymous,
+        anonymous: true,
         postId: blogId,
       });
 
-      toast.success("Thank you for your feedback ❤️");
+      if (!result.success) {
+        throw new Error(result.error);
+      }
 
+      toast.success("Thank you for your feedback ❤️");
       form.reset();
-      setShowSignInModal(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Failed to submit feedback. Please try again.");
     } finally {
       setIsLoading(false);
@@ -72,18 +59,7 @@ export default function BlogFeedback({ blogId }: { blogId: string }) {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user) {
-      setShowSignInModal(true);
-      return;
-    }
-
-    form.handleSubmit((data) => onSubmit(data, false))();
-  };
-
-  const handleAnonymousSubmit = () => {
-    const values = form.getValues();
-    onSubmit(values, true);
+    form.handleSubmit(onSubmit)();
   };
 
   return (
@@ -143,31 +119,6 @@ export default function BlogFeedback({ blogId }: { blogId: string }) {
         </form>
       </Form>
 
-      <Dialog open={showSignInModal} onOpenChange={setShowSignInModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Submit Feedback</DialogTitle>
-            <DialogDescription>You’re not signed in. Would you like to sign in or submit anonymously?</DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className='flex flex-col gap-3 sm:flex-col mt-5'>
-            <Button
-              onClick={() => router.push(`/auth/sign-in?callbackUrl=${encodeURIComponent(pathname)}`)}
-              className='bg-theme-primary hover:bg-theme-primary/90 w-full text-white'
-            >
-              Sign In to Submit
-            </Button>
-
-            <Button onClick={handleAnonymousSubmit} variant='outline' disabled={isLoading} className='w-full'>
-              Submit Anonymously
-            </Button>
-
-            <Button onClick={() => setShowSignInModal(false)} variant='ghost' className='w-full'>
-              Cancel
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

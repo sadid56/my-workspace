@@ -1,4 +1,4 @@
-import { Status } from "@/theme/status-badge";
+import { Status } from "@repo/database";
 
 export interface BlogRootSettings {
   title: string;

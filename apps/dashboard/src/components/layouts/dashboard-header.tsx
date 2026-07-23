@@ -57,19 +57,19 @@ export const DashboardHeader = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className='mx-1 my-1 opacity-50' />
             <DropdownMenuGroup className='p-1'>
-              <Link href='/dashboard'>
+              <Link to='/dashboard'>
                 <DropdownMenuItem className='rounded-xl p-2.5 transition-all focus:bg-primary/5 focus:text-primary'>
                   <LayoutDashboard className='mr-3 h-4 w-4' />
                   <span>Dashboard</span>
                 </DropdownMenuItem>
               </Link>
-              <Link href='/dashboard/blogs'>
+              <Link to='/dashboard/blogs'>
                 <DropdownMenuItem className='rounded-xl p-2.5 transition-all focus:bg-primary/5 focus:text-primary'>
                   <Layout className='mr-3 h-4 w-4' />
                   <span>Blogs</span>
                 </DropdownMenuItem>
               </Link>
-              <Link href='/dashboard/settings'>
+              <Link to='/dashboard/settings'>
                 <DropdownMenuItem className='rounded-xl p-2.5 transition-all focus:bg-primary/5 focus:text-primary'>
                   <Settings className='mr-3 h-4 w-4' />
                   <span>Preferences</span>

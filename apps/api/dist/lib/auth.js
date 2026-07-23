@@ -7,7 +7,6 @@ exports.hashPassword = hashPassword;
 exports.comparePassword = comparePassword;
 exports.signToken = signToken;
 exports.verifyToken = verifyToken;
-exports.requireAdmin = requireAdmin;
 const crypto_1 = __importDefault(require("crypto"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key-123456";
@@ -36,16 +35,4 @@ function verifyToken(token) {
     catch (error) {
         return null;
     }
-}
-function requireAdmin(req, res, next) {
-    const token = req.cookies.admin_token;
-    if (!token) {
-        return res.status(401).json({ success: false, message: "Unauthorized. Token missing." });
-    }
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== "ADMIN") {
-        return res.status(403).json({ success: false, message: "Forbidden. Admin access required." });
-    }
-    req.user = decoded;
-    next();
 }

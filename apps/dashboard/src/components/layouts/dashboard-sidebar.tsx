@@ -13,7 +13,7 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <Link className='font-medium text-xl pl-2 py-3' href={"/"} onClick={() => setOpenMobile(false)}>
+        <Link className='font-medium text-xl pl-2 py-3' to={"/"} onClick={() => setOpenMobile(false)}>
           {state === "collapsed" ? "D" : "Dashboard"}
         </Link>
       </SidebarHeader>

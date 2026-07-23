@@ -1,4 +1,6 @@
 import { prisma } from "@repo/database";
+import { StatusCodes } from "http-status-codes";
+import { AppError } from "@utils";
 
 export class FeedbackService {
   static async getFeedbacks(search: string = "", page: number = 1, limit: number = 10) {
@@ -59,8 +61,16 @@ export class FeedbackService {
   }
 
   static async deleteFeedback(id: string) {
+    const exists = await prisma.feedback.findUnique({
+      where: { id },
+    });
+    if (!exists) {
+      throw new AppError("Feedback not found", StatusCodes.NOT_FOUND);
+    }
+
     return prisma.feedback.delete({
       where: { id },
     });
   }
 }
+

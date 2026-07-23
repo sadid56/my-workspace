@@ -1,5 +1,6 @@
 import { prisma } from "@repo/database";
-import { generateSlug } from "../../utils/generateSlug";
+import { StatusCodes } from "http-status-codes";
+import { generateSlug, AppError } from "@utils";
 
 export class CategoryService {
   static async getCategories() {
@@ -12,11 +13,19 @@ export class CategoryService {
 
   static async createCategory(title: string) {
     const slug = generateSlug(title);
-    return prisma.category.create({
-      data: {
-        title,
-        slug,
-      },
-    });
+    try {
+      return await prisma.category.create({
+        data: {
+          title,
+          slug,
+        },
+      });
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        throw new AppError("Category title or slug already exists", StatusCodes.BAD_REQUEST);
+      }
+      throw error;
+    }
   }
 }
+

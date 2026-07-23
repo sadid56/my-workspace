@@ -56,7 +56,7 @@ export function NavMain({
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton asChild>
                               <Link
-                                href={subItem.url}
+                                to={subItem.url}
                                 className={`${isSubActive ? "bg-theme-primary text-white" : ""}`}
                                 onClick={() => setOpenMobile(false)}
                               >
@@ -76,7 +76,7 @@ export function NavMain({
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild className={`cursor-pointer ${isActive ? "bg-theme-primary text-white" : ""}`}>
-                  <Link href={item.url} onClick={() => setOpenMobile(false)}>
+                  <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon && <item.icon className='mr-2' />}
                     <span>{item.title}</span>
                   </Link>

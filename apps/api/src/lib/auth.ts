@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
+import { Request } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-key-123456";
 
@@ -34,19 +34,4 @@ export function verifyToken(token: string) {
 
 export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
-}
-
-export function requireAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const token = req.cookies.admin_token;
-  if (!token) {
-    return res.status(401).json({ success: false, message: "Unauthorized. Token missing." });
-  }
-
-  const decoded = verifyToken(token);
-  if (!decoded || decoded.role !== "ADMIN") {
-    return res.status(403).json({ success: false, message: "Forbidden. Admin access required." });
-  }
-
-  req.user = decoded;
-  next();
 }

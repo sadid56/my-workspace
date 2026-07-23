@@ -1,32 +1,28 @@
 import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import { CategoryService } from "./category.service";
+import { catchAsync, sendResponse } from "@utils";
 
 export class CategoryController {
-  static async getCategories(req: Request, res: Response) {
-    try {
-      const categories = await CategoryService.getCategories();
-      return res.status(200).json(categories);
-    } catch (error) {
-      console.error("getCategories error:", error);
-      return res.status(500).json({ error: "Failed to fetch categories" });
-    }
-  }
+  static getCategories = catchAsync(async (req: Request, res: Response) => {
+    const categories = await CategoryService.getCategories();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Categories retrieved successfully",
+      data: categories,
+    });
+  });
 
-  static async createCategory(req: Request, res: Response) {
-    try {
-      const { title } = req.body;
-      if (!title) {
-        return res.status(400).json({ error: "Category title is required" });
-      }
-
-      const category = await CategoryService.createCategory(title);
-      return res.status(201).json(category);
-    } catch (error: any) {
-      console.error("createCategory error:", error);
-      if (error.code === "P2002") {
-        return res.status(400).json({ error: "Category title or slug already exists" });
-      }
-      return res.status(500).json({ error: "Failed to create category" });
-    }
-  }
+  static createCategory = catchAsync(async (req: Request, res: Response) => {
+    const { title } = req.body;
+    const category = await CategoryService.createCategory(title);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.CREATED,
+      message: "Category created successfully",
+      data: category,
+    });
+  });
 }
+

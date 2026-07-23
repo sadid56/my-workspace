@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppMutation } from "@/hooks/useAppMutation";
 import { FeedbackEndpoints } from "./api";
 import { feedbackKeys } from "./keys";
-import { Feedback } from "../../../prisma/generated/client";
+import { Feedback } from "@repo/database";
 
 export function useFeedbacks(params: { search?: string; page?: number; limit?: number }) {
   return useQuery({

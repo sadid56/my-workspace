@@ -1,4 +1,4 @@
-import ICONS from "@/constant/icons";
+import ICONS from "@/constants/icons";
 
 const services = [
   {

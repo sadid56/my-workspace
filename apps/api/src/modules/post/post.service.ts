@@ -1,4 +1,6 @@
 import { prisma } from "@repo/database";
+import { StatusCodes } from "http-status-codes";
+import { AppError } from "@utils";
 
 export class PostService {
   static async getBlogs(category?: string, search?: string, page: number = 1, limit: number = 3) {
@@ -48,16 +50,20 @@ export class PostService {
   }
 
   static async getBlogDetails(slug: string) {
-    return prisma.post.findUnique({
+    const blog = await prisma.post.findUnique({
       where: {
         slug,
         status: "active",
       },
     });
+    if (!blog) {
+      throw new AppError("Blog not found", StatusCodes.NOT_FOUND);
+    }
+    return blog;
   }
 
   static async getBlogDetailsMetaData(slug: string) {
-    return prisma.post.findUnique({
+    const meta = await prisma.post.findUnique({
       where: {
         slug,
         status: "active",
@@ -69,6 +75,10 @@ export class PostService {
         descriptions: true,
       },
     });
+    if (!meta) {
+      throw new AppError("Blog metadata not found", StatusCodes.NOT_FOUND);
+    }
+    return meta;
   }
 
   static async getRecentBlogs() {
@@ -90,18 +100,25 @@ export class PostService {
   }
 
   static async createPost(data: any, coverImageUrl: string) {
-    return prisma.post.create({
-      data: {
-        title: data.title,
-        slug: data.slug,
-        tags: data.tags || [],
-        coverImage: coverImageUrl,
-        descriptions: data.descriptions,
-        category: data.category,
-        readTime: Number(data.readTime) || 0,
-        content: data.content,
-      },
-    });
+    try {
+      return await prisma.post.create({
+        data: {
+          title: data.title,
+          slug: data.slug,
+          tags: data.tags || [],
+          coverImage: coverImageUrl,
+          descriptions: data.descriptions,
+          category: data.category,
+          readTime: Number(data.readTime) || 0,
+          content: data.content,
+        },
+      });
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        throw new AppError("Blog title or slug already exists", StatusCodes.BAD_REQUEST);
+      }
+      throw error;
+    }
   }
 
   static async getAllBlogsRaw() {
@@ -113,6 +130,13 @@ export class PostService {
   }
 
   static async updatePostStatus(id: string, status: any) {
+    const exists = await prisma.post.findUnique({
+      where: { id },
+    });
+    if (!exists) {
+      throw new AppError("Blog not found", StatusCodes.NOT_FOUND);
+    }
+
     return prisma.post.update({
       where: { id },
       data: {
@@ -122,8 +146,13 @@ export class PostService {
   }
 
   static async getBlogById(id: string) {
-    return prisma.post.findUnique({
+    const blog = await prisma.post.findUnique({
       where: { id },
     });
+    if (!blog) {
+      throw new AppError("Blog not found", StatusCodes.NOT_FOUND);
+    }
+    return blog;
   }
 }
+
